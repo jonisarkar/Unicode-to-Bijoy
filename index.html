@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="bn" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bijoy ⇄ Unicode Converter — Fast & Accurate Bangla Tool</title>
+<meta name="description" content="Convert Bangla Unicode to Bijoy and Bijoy to Unicode instantly. Free, fast, offline, 100% accurate.">
+<link rel="icon" type="image/png" href="logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Hind+Siliguri:wght@400;500;600;700&family=Noto+Serif+Bengali:wght@600;700&display=swap" rel="stylesheet">
+<style>
+/* ============ FLAT DESIGN ============ */
+/* Local fonts: Bangla.ttf = Unicode, SutonnyMJ.ttf = Bijoy */
+@font-face{
+  font-family:'BanglaLocal';
+  src:url('Bangla.ttf') format('truetype');
+  font-weight:400 700;
+  font-display:swap;
+}
+@font-face{
+  font-family:'SutonnyMJ';
+  src:url('SutonnyMJ.ttf') format('truetype');
+  font-weight:400 700;
+  font-display:swap;
+}
+:root{
+  --bg:#121417;
+  --topbar:#1a1d21;
+  --card:#1a1d21;
+  --input:#101215;
+  --border:#2e3238;
+  --text:#f2f4f7;
+  --muted:#9aa1ab;
+  --muted2:#6b7280;
+  --primary:#00a06a;
+  --primary-hover:#008f5e;
+  --primary-text:#ffffff;
+  --blue:#2f80ed;
+  --blue-bg:rgba(47,128,237,.14);
+  --gold-bg:rgba(0,160,106,.14);
+  --danger:#eb5757;
+  --r:8px;
+}
+[data-theme="light"]{
+  --bg:#eef0f3;
+  --topbar:#ffffff;
+  --card:#ffffff;
+  --input:#f4f6f8;
+  --border:#dfe3e8;
+  --text:#1a1d21;
+  --muted:#5f6b76;
+  --muted2:#98a2ad;
+  --primary:#006a4e;
+  --primary-hover:#005841;
+  --primary-text:#ffffff;
+  --blue:#1a73e8;
+  --blue-bg:#e8f0fe;
+  --gold-bg:#e6f4ee;
+  --danger:#d93025;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  font-family:'Inter','Hind Siliguri',system-ui,sans-serif;
+  background:var(--bg); color:var(--text);
+  min-height:100vh;
+}
+/* Top bar — flat solid */
+.topbar{
+  position:sticky; top:0; z-index:50;
+  background:var(--topbar);
+  border-bottom:1px solid var(--border);
+}
+.topbar-inner{
+  max-width:100%; margin:0 auto; padding:.7rem 1.25rem;
+  display:flex; align-items:center; gap:.9rem;
+}
+.brand{display:flex; align-items:center; gap:.7rem; text-decoration:none; color:var(--text)}
+.brand img{width:38px;height:38px;border-radius:8px;object-fit:cover;border:1px solid var(--border)}
+.brand-name{font-weight:700; font-size:1rem; line-height:1.2}
+.brand-name small{display:block; font-weight:400; color:var(--muted); font-size:.74rem}
+.top-actions{margin-left:auto; display:flex; align-items:center; gap:.5rem}
+.pill{
+  font-size:.72rem; font-weight:700; letter-spacing:.05em;
+  padding:.35rem .7rem; border-radius:6px;
+  background:var(--gold-bg); color:var(--primary);
+  border:1px solid var(--primary);
+}
+.icon-btn{
+  width:38px;height:38px;border-radius:8px; display:grid; place-items:center;
+  background:var(--input); border:1px solid var(--border);
+  color:var(--text); cursor:pointer;
+}
+.icon-btn:hover{border-color:var(--muted)}
+.wrap{max-width:100%; margin:0 auto; padding:1.2rem clamp(.8rem,2.5vw,2rem) 2rem; width:100%}
+@media(min-width:1400px){.wrap{padding-left:2.5rem; padding-right:2.5rem}}
+/* Hero — flat, centered */
+.hero{margin:.6rem auto 1.2rem; text-align:center; max-width:720px; border-left:0; padding-left:0}
+.hero h1{
+  font-family:'BanglaLocal','Noto Serif Bengali','Hind Siliguri','Inter',serif;
+  font-size:clamp(1.5rem,3.5vw,2.2rem); font-weight:700; letter-spacing:-.01em; line-height:1.25;
+}
+.hero h1 .grad{color:var(--primary)}
+.hero p{color:var(--muted); margin-top:.3rem; font-size:.95rem; text-align:center}
+.hero-meta{display:flex; gap:.5rem; margin-top:.7rem; flex-wrap:wrap; justify-content:center; align-items:center}
+.chip{
+  display:inline-flex; align-items:center; justify-content:center; gap:.35rem;
+  font-size:.78rem; color:var(--muted); white-space:nowrap; line-height:1;
+  background:var(--card); border:1px solid var(--border);
+  padding:.4rem .75rem; border-radius:6px;
+}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--primary)}
+/* Mode bar — flat card */
+.modebar{
+  display:flex; align-items:center; justify-content:space-between; gap:1rem;
+  background:var(--card); border:1px solid var(--border);
+  border-radius:10px; padding:.7rem .8rem; margin-bottom:.9rem;
+  flex-wrap:wrap;
+}
+.mode-switch{
+  display:flex; align-items:center; gap:.3rem;
+  background:var(--input); border:1px solid var(--border);
+  padding:.25rem; border-radius:8px;
+}
+.mode-opt{
+  border:1px solid transparent; background:transparent; color:var(--muted);
+  font-weight:600; font-size:.83rem;
+  padding:.5rem .95rem; border-radius:6px; cursor:pointer;
+  white-space:nowrap;
+}
+.mode-opt.active{background:var(--primary); color:var(--primary-text)}
+.swap-fab{
+  width:34px;height:34px;border-radius:6px; border:1px solid var(--border);
+  background:var(--card); color:var(--text);
+  display:grid; place-items:center; cursor:pointer; flex-shrink:0; font-size:1rem;
+}
+.swap-fab:hover{background:var(--primary); color:var(--primary-text); border-color:var(--primary)}
+#mode-display{font-size:.76rem; font-weight:700; letter-spacing:.06em; color:var(--muted)}
+#mode-display strong{color:var(--primary)}
+.toolbar{display:flex; gap:.5rem; flex-wrap:wrap}
+.btn{
+  display:inline-flex; align-items:center; gap:.45rem;
+  padding:.6rem 1rem; border-radius:8px; font-weight:600; font-size:.87rem;
+  border:1px solid var(--border); cursor:pointer; text-decoration:none;
+  background:var(--input); color:var(--text);
+}
+.btn:active{opacity:.85}
+.btn-primary{background:var(--primary); border-color:var(--primary); color:var(--primary-text)}
+.btn-primary:hover{background:var(--primary-hover)}
+.btn-ghost:hover{border-color:var(--muted)}
+.btn-danger-ghost{color:var(--muted)}
+.btn-danger-ghost:hover{color:var(--danger); border-color:var(--danger)}
+/* Editor card — flat */
+.card{
+  background:var(--card); border:1px solid var(--border);
+  border-radius:10px; overflow:hidden;
+}
+.grid{display:grid; grid-template-columns:1fr;}
+@media(min-width:860px){.grid{grid-template-columns:1fr 1fr}}
+.pane{padding:1rem; display:flex; flex-direction:column; gap:.7rem; min-width:0}
+.pane + .pane{border-top:1px solid var(--border)}
+@media(min-width:860px){.pane + .pane{border-top:0; border-left:1px solid var(--border)}}
+.pane-head{display:flex; align-items:center; justify-content:space-between; gap:.6rem}
+.pane-title{display:flex; align-items:center; gap:.55rem; font-weight:700; font-size:.78rem; letter-spacing:.06em; text-transform:uppercase}
+.badge{font-size:.68rem; font-weight:700; letter-spacing:.05em; padding:.22rem .55rem; border-radius:5px; border:1px solid var(--border)}
+.badge.u{background:var(--blue-bg); color:var(--blue); border-color:var(--blue)}
+.badge.b{background:var(--gold-bg); color:var(--primary); border-color:var(--primary)}
+.mini-actions{display:flex; gap:.4rem}
+.mini{
+  font-size:.76rem; font-weight:600; padding:.4rem .7rem; border-radius:6px;
+  background:var(--input); border:1px solid var(--border); color:var(--text);
+  cursor:pointer; display:inline-flex; align-items:center; gap:.3rem;
+}
+.mini:hover{border-color:var(--primary); color:var(--primary)}
+textarea{
+  width:100%; height:52vh; min-height:380px; resize:vertical;
+  background:var(--input); border:1px solid var(--border); border-radius:8px;
+  padding:.9rem 1rem; color:var(--text);
+  font-family:'BanglaLocal','Hind Siliguri','Inter',sans-serif; font-size:1.15rem; line-height:1.9;
+  outline:none;
+}
+textarea:focus{border-color:var(--primary)}
+textarea::placeholder{color:var(--muted2)}
+.pane-foot{display:flex; align-items:center; justify-content:space-between; gap:.6rem; flex-wrap:wrap}
+.count{font-size:.78rem; color:var(--muted); font-variant-numeric:tabular-nums}
+.count b{color:var(--text)}
+.hint{font-size:.76rem; color:var(--muted2)}
+kbd{font-family:inherit; font-size:.72rem; background:var(--input); border:1px solid var(--border); padding:.1rem .4rem; border-radius:4px}
+.divider{display:flex; align-items:center; gap:.8rem; padding:.6rem 1rem; color:var(--muted2); font-size:.76rem; background:var(--input); border-top:1px solid var(--border); border-bottom:1px solid var(--border)}
+.features{display:grid; grid-template-columns:1fr; gap:.7rem; margin-top:.9rem}
+@media(min-width:700px){.features{grid-template-columns:repeat(3,1fr)}}
+.feat{background:var(--card); border:1px solid var(--border); border-radius:10px; padding:.95rem 1rem; display:flex; gap:.75rem; align-items:flex-start}
+.feat-ic{width:34px;height:34px;border-radius:8px;display:grid;place-items:center;flex-shrink:0;background:var(--gold-bg);border:1px solid var(--primary);font-size:1rem}
+.feat h3{font-size:.88rem; margin-bottom:.2rem}
+.feat p{font-size:.82rem; color:var(--muted); line-height:1.55}
+footer{margin-top:1.4rem; text-align:center; color:var(--muted2); font-size:.82rem; line-height:1.7}
+footer a{color:var(--primary); text-decoration:none}
+/* Toast — flat */
+#toast{
+  position:fixed; left:50%; bottom:1.4rem; transform:translateX(-50%) translateY(120px);
+  background:var(--topbar); color:var(--text); border:1px solid var(--border);
+  padding:.7rem 1rem; border-radius:8px; font-size:.87rem; font-weight:600;
+  display:flex; align-items:center; gap:.55rem; z-index:100;
+  transition:transform .25s ease; opacity:0; max-width:92vw;
+}
+#toast.show{transform:translateX(-50%) translateY(0); opacity:1}
+.toast-ok{width:22px;height:22px;border-radius:6px;background:var(--primary);color:#fff;display:grid;place-items:center;flex-shrink:0;font-size:.8rem}
+.bijoy-text{font-family:'SutonnyMJ','Hind Siliguri',sans-serif !important}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}
+:focus-visible{outline:2px solid var(--primary); outline-offset:2px}
+/* ---- Full display / focus mode ---- */
+body.full-display .hero, body.full-display .features, body.full-display footer, body.full-display .divider{display:none}
+body.full-display .wrap{max-width:100%; padding:.8rem clamp(.6rem,1.5vw,1.5rem) 1rem; height:calc(100vh - 53px); display:flex; flex-direction:column}
+body.full-display .modebar{margin-bottom:.7rem}
+body.full-display .card{flex:1; display:flex; flex-direction:column; min-height:0}
+body.full-display .grid{flex:1; min-height:0}
+body.full-display .pane{min-height:0}
+body.full-display textarea{flex:1; height:auto; min-height:0; resize:none; font-size:1.2rem}
+body.full-display .card > div:last-child{padding-top:.5rem}
+@media(max-width:859px){
+  body.full-display .wrap{height:auto; display:block}
+  body.full-display textarea{height:42vh; min-height:260px; resize:vertical}
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-inner">
+    <a class="brand" href="#">
+      <img src="logo.png" alt="Bijoy Converter logo">
+      <span class="brand-name">Bijoy Converter<small>Unicode ⇄ Bijoy • বাংলা টুল</small></span>
+    </a>
+    <div class="top-actions">
+      <span class="pill">v2 • OFFLINE</span>
+      <button class="icon-btn" id="full-btn" onclick="toggleFullDisplay()" title="Full display mode (F)" aria-label="Full display">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M8 3H5a2 2 0 0 0-2 2v3M16 3h3a2 2 0 0 1 2 2v3M8 21H5a2 2 0 0 1-2-2v-3M16 21h3a2 2 0 0 0 2-2v-3"/></svg>
+      </button>
+      <button class="icon-btn" id="theme-btn" onclick="toggleTheme()" title="Toggle light / dark" aria-label="Toggle theme">
+        <svg id="theme-icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        <svg id="theme-icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="display:none"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+      </button>
+    </div>
+  </div>
+</div>
+
+<main class="wrap">
+  <section class="hero">
+    <h1><span class="grad">ইউনিকোড ⇄ বিজয়</span> কনভার্টার</h1>
+    <p>100% accurate, instant conversion. Type or paste — output appears live.</p>
+    <div class="hero-meta">
+      <span class="chip"><span class="dot"></span> Live auto-convert</span>
+      <span class="chip">No signup • works offline</span>
+      <span class="chip"><kbd>Ctrl</kbd> + <kbd>Enter</kbd> to convert</span>
+    </div>
+  </section>
+
+  <div class="modebar">
+    <div style="display:flex;align-items:center;gap:.8rem;flex-wrap:wrap">
+      <div class="mode-switch" role="tablist" aria-label="Conversion direction">
+        <button id="btn-u2b" class="mode-opt active" onclick="setMode('U2B')">Unicode → Bijoy</button>
+        <button id="swap-mini" class="swap-fab" onclick="toggleMode()" title="Swap direction (⇄)" aria-label="Swap">⇄</button>
+        <button id="btn-b2u" class="mode-opt" onclick="setMode('B2U')">Bijoy → Unicode</button>
+      </div>
+      <div id="mode-display">MODE: <strong>UNICODE → BIJOY</strong></div>
+    </div>
+    <div class="toolbar">
+      <button class="btn btn-primary" onclick="convert()">Convert Now</button>
+      <button class="btn btn-ghost" onclick="swapText()" title="Swap input/output text">⇄ Swap text</button>
+      <button class="btn btn-ghost" onclick="copyOutput()" title="Copy output">Copy output</button>
+      <button class="btn btn-ghost" onclick="downloadOutput()" title="Download as .txt">Download .txt</button>
+      <button class="btn btn-ghost" id="full-btn2" onclick="toggleFullDisplay()">⛶ Full display</button>
+      <button class="btn btn-ghost" onclick="clearAll()">Clear</button>
+    </div>
+  </div>
+
+  <section class="card">
+    <div class="grid">
+      <div class="pane">
+        <div class="pane-head">
+          <div class="pane-title"><span id="input-label">Unicode Input</span> <span id="input-badge" class="badge u">UNICODE</span></div>
+          <div class="mini-actions">
+            <button class="mini" onclick="pasteInput()" title="Paste from clipboard">Paste</button>
+            <button class="mini" onclick="clearInput()" title="Clear input">✕</button>
+          </div>
+        </div>
+        <label class="sr" for="input-text">Input text</label>
+        <textarea id="input-text" placeholder="এখানে ইউনিকোড বাংলা লিখুন বা পেস্ট করুন…"></textarea>
+        <div class="pane-foot">
+          <span class="count" id="in-count"><b>0</b> chars • <b>0</b> words</span>
+          <span class="hint">Auto-converts as you type</span>
+        </div>
+      </div>
+      <div class="pane">
+        <div class="pane-head">
+          <div class="pane-title"><span id="output-label">Bijoy Output</span> <span id="output-badge" class="badge b">BIJOY</span></div>
+          <div class="mini-actions">
+            <button class="mini" onclick="copyOutput()" title="Copy output">Copy</button>
+            <button class="mini" onclick="downloadOutput()" title="Download as .txt">TXT</button>
+          </div>
+        </div>
+        <label class="sr" for="output-text">Output text</label>
+        <textarea id="output-text" readonly placeholder="আউটপুট এখানে দেখা যাবে…" class="bijoy-text"></textarea>
+        <div class="pane-foot">
+          <span class="count" id="out-count"><b>0</b> chars • <b>0</b> words</span>
+          <span class="hint" id="font-hint">Bijoy in SutonnyMJ • Unicode in Bangla</span>
+        </div>
+      </div>
+    </div>
+    <div class="divider">tip — paste a Word / newspaper paragraph and hit Convert</div>
+    <div style="padding:.7rem 1rem; display:flex; gap:.5rem; flex-wrap:wrap; border-top:1px solid var(--border)">
+      <button class="btn btn-ghost" onclick="swapText()" title="Swap input/output text">⇄ Swap text</button>
+      <button class="btn btn-ghost" onclick="copyOutput()">Copy output</button>
+      <button class="btn btn-ghost" onclick="downloadOutput()">Download .txt</button>
+      <span style="flex:1"></span>
+      <button class="btn btn-danger-ghost" onclick="clearAll()">Clear all</button>
+    </div>
+  </section>
+
+  <section class="features">
+    <div class="feat"><div class="feat-ic">✓</div><div><h3>100% Accurate engine</h3><p>Proper re-ordering of reph, kar &amp; jukto-borno for print-ready Bijoy.</p></div></div>
+    <div class="feat"><div class="feat-ic">◷</div><div><h3>Instant &amp; offline</h3><p>No server. Conversion runs locally in your browser — private &amp; fast.</p></div></div>
+    <div class="feat"><div class="feat-ic">▤</div><div><h3>Press-ready output</h3><p>Copy straight into InDesign, Illustrator or Bijoy documents.</p></div></div>
+  </section>
+
+  <footer>
+    Built for professional Bangla creators • Unicode ⇄ Bijoy (SutonnyMJ)<br>
+    <span>Fonts bundled locally — Unicode in Bangla, Bijoy in SutonnyMJ. No install needed.</span>
+  </footer>
+</main>
+
+<div id="toast" role="status"><span class="toast-ok">✓</span><span id="toast-msg">Copied!</span></div>
+
+<script src="converter.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
